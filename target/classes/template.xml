@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:http-policy="http://www.mulesoft.org/schema/mule/http-policy"
+      xmlns:http-transform="http://www.mulesoft.org/schema/mule/http-policy-transform"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+               http://www.mulesoft.org/schema/mule/http-policy http://www.mulesoft.org/schema/mule/http-policy/current/mule-http-policy.xsd
+               http://www.mulesoft.org/schema/mule/http-policy-transform http://www.mulesoft.org/schema/mule/http-policy-transform/current/mule-http-policy-transform.xsd">
+
+
+    <http-policy:proxy name="{{{policyId}}}-custom-policy">
+        <http-policy:source>
+        
+        	<set-variable variableName="level" value="#[attributes.headers['level']]"/>
+        	
+        	{{#if quizDifficultyEnabled}}
+               <set-variable variableName="enableQuizDifficulty" value="{{{quizDifficultyCondition}}}"/>
+            {{/if}}
+
+            <http-policy:execute-next/>
+            
+            <set-variable variableName="content" value="#[payload]"/>
+
+            <http-transform:set-response statusCode="201">
+                <http-transform:body>#[ output application/json --- (if(vars.enableQuizDifficulty) vars.content - 'Hint' - 'Options' else vars.content) ]</http-transform:body>
+                <http-transform:headers>#[ {'Quiz Policy': 'Applied'} ]</http-transform:headers>
+            </http-transform:set-response>
+
+        </http-policy:source>
+    </http-policy:proxy>
+</mule>

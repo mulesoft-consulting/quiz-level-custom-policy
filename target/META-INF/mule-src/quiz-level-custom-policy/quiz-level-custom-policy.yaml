@@ -1,0 +1,26 @@
+id: quiz-level
+name: quiz-level
+description: This policy changes the level of difficulty of a quiz
+category: Custom
+type: custom
+resourceLevelSupported: true
+encryptionSupported: false
+standalone: true
+requiredCharacteristics: []
+providedCharacteristics: []
+configuration:
+  - propertyName: quizDifficultyEnabled
+    name: Enable quiz difficulty
+    description: If enabled, the policy will change the difficulty based on the level
+    type: boolean
+    optional: true
+    defaultValue: false
+  - propertyName: quizDifficultyCondition
+    name: Condition whether difficulty needs to be changed
+    description: Dataweave expression to determine the condition for applying level of difficulty
+    type: expression
+    optional: true
+    sensitive: false
+    allowMultiple: false
+    dependsOnKey: quizDifficultyEnabled
+    dependsOnValue: true
